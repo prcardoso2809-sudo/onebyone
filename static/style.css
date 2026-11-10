@@ -1,0 +1,83 @@
+<<<<<<< HEAD
+body {
+    margin: 0;
+    font-family: 'Martel Sans', sans-serif;
+    background-color: #8c52ff;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header {
+    background-color: #9d65ff;
+    padding: 30px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.header-content h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.header-content p {
+    margin: 8px 0 0 0;
+    font-size: 1.05rem;
+    opacity: 0.95;
+}
+
+.profile-icon {
+    width: 65px;
+    height: 65px;
+    background-color: #7641e5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255,255,255,0.4);
+    overflow: hidden;
+}
+
+.profile-icon svg {
+    width: 38px;
+    height: 38px;
+    fill: white;
+}
+
+.main-container {
+    flex: 1;
+    background-color: #a86cff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 40px;
+}
+
+.btn {
+    background-color: #bfa1ff;
+    color: #1a1a1a;
+    border: none;
+    padding: 18px 35px;
+    font-size: 1.05rem;
+    font-weight: bold;
+    border-radius: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    background-color: #d0baff;
+    transform: translateY(-2px);
+=======
+h1 {
+    color: aqua;
+>>>>>>> 34311e4704100d0b9c32b2e4679d9fa70c622b84
+}

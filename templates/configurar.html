@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Um por Um! - Configurar Servidor</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Martel+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='sldashboard.css') }}"
+    />
+  </head>
+  <body>
+    <header class="top-header">
+      <h1><a href="/dashboard">um por um!</a></h1>
+      <div class="profile-avatar">
+        {% if user and user.avatar %}
+        <img
+          src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png"
+          alt="Avatar"
+        />
+        {% else %}
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"
+          />
+        </svg>
+        {% endif %}
+      </div>
+    </header>
+
+    <div class="middle-container">
+      <nav class="sidebar">
+        <a href="/dashboard">← voltar</a>
+      </nav>
+
+      <main class="content-box scrollable-box">
+        <h2 class="section-title">⚙️ Configurações do Servidor</h2>
+        <p class="section-desc">
+          Personalize o prefixo e o canal onde o bot responderá:
+        </p>
+
+        <form
+          action="/configurar/{{ guild_id }}"
+          method="POST"
+          class="config-form"
+        >
+          <div class="form-group">
+            <label for="prefixo">Prefixo Personalizado:</label>
+            <input
+              type="text"
+              id="prefixo"
+              name="prefixo"
+              value="{{ config.prefixo if config else '@-' }}"
+              required
+              placeholder="Ex: @-, !, ?"
+            />
+          </div>
+
+          <div class="form-group">
+                <label for="canal_jogo_id">Canal de Jogo:</label>
+                <select id="canal_jogo_id" name="canal_jogo_id" class="form-input">
+                    <option value="">Qualquer canal (Padrão)</option>
+                    {% for c in channels %}
+                        <option value="{{ c.id }}" {% if config and config.canal_jogo_id == c.id %}selected{% endif %}>
+                            #{{ c.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+          <button
+            type="submit"
+            class="btn-config"
+            style="
+              padding: 10px 25px;
+              border: none;
+              cursor: pointer;
+              font-size: 1rem;
+            "
+          >
+            Salvar Alterações
+          </button>
+        </form>
+      </main>
+    </div>
+
+    <footer class="footer-status">
+      status do bot: {% if bot_online %}
+      <span class="status-dot" style="background-color: #22c55e"></span> on-line
+      {% else %}
+      <span class="status-dot" style="background-color: #ef4444"></span>
+      off-line {% endif %}
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Um por Um! - Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Martel+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='sldashboard.css') }}"
+    />
+  </head>
+  <body>
+    <header class="top-header">
+      <h1><a href="/dashboard">um por um!</a></h1>
+      <div class="profile-avatar">
+        {% if user and user.avatar %}
+        <img
+          src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png"
+          alt="Avatar"
+        />
+        {% else %}
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"
+          />
+        </svg>
+        {% endif %}
+      </div>
+    </header>
+
+    <div class="middle-container">
+      <nav class="sidebar">
+        <a href="/dashboard">servidores</a>
+        <a href="/historias">histórias</a>
+      </nav>
+
+      <main class="content-box scrollable-box">
+        {% if view == 'historias' %}
+        <h2 class="section-title">📜 Histórias Registradas</h2>
+        {% if historias %}
+        <div class="list-container">
+          {% for h in historias %}
+          <div class="card-item">
+            <p class="card-title">
+              <strong>Vencedor ID:</strong> {{ h.vencedor_id }}
+            </p>
+            <p class="card-subtitle">"{{ h.texto_completo }}"</p>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-text">
+          Ainda não há histórias salvas. Vencedores de partidas aparecerão aqui!
+        </p>
+        {% endif %} {% else %}
+        <h2 class="section-title">🖥️ Escolha um Servidor</h2>
+        <p class="section-desc">
+          Selecione o servidor onde deseja gerenciar o bot:
+        </p>
+
+        <!-- Dentro do bloco de servidores no dashboard.html -->
+        {% if guilds %}
+        <div class="guilds-grid">
+          {% for g in guilds %}
+          <div class="guild-card">
+            <span class="guild-name">{{ g.name }}</span>
+            {% if g.is_admin %} {% if g.bot_presente %}
+            <a href="/configurar/{{ g.id }}" class="btn-config">Configurar</a>
+            {% else %}
+            <a
+              href="https://discord.com/oauth2/authorize?client_id={{ client_id }}&scope=bot&permissions=8&guild_id={{ g.id }}"
+              target="_blank"
+              class="btn-invite"
+              >Convidar Bot</a
+            >
+            {% endif %} {% else %}
+            <span class="guild-readonly">Apenas visualização</span>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-text">
+          Nenhum servidor comum encontrado ou você precisa entrar novamente.
+        </p>
+        {% endif %} {% endif %}
+      </main>
+    </div>
+
+    <footer class="footer-status">
+      status do bot: {% if bot_online %}
+      <span class="status-dot" style="background-color: #22c55e"></span> on-line
+      {% else %}
+      <span class="status-dot" style="background-color: #ef4444"></span>
+      off-line {% endif %}
+    </footer>
+  </body>
+</html>
