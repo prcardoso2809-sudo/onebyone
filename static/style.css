@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 body {
     margin: 0;
     font-family: 'Martel Sans', sans-serif;
@@ -76,8 +75,4 @@ body {
 .btn:hover {
     background-color: #d0baff;
     transform: translateY(-2px);
-=======
-h1 {
-    color: aqua;
->>>>>>> 34311e4704100d0b9c32b2e4679d9fa70c622b84
 }

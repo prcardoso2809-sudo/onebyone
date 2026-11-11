@@ -104,8 +104,8 @@ def dashboard():
         client_id=CLIENT_ID
     )
 
-@app.route('/historias')
-def ver_historias():
+@app.route('/historias/<guild_id>')
+def ver_historias_servidor(guild_id):
     if 'discord_token' not in session:
         return redirect(url_for('index'))
 
@@ -113,20 +113,30 @@ def ver_historias():
     user_resp = requests.get('https://discord.com/api/users/@me', headers=headers)
     user_data = user_resp.json() if user_resp.status_code == 200 else None
 
-    bot_guilds_resp = requests.get(
-        'https://discord.com/api/v10/users/@me/guilds',
-        headers={'Authorization': f"Bot {BOT_TOKEN}"}
-    )
-    bot_online = bot_guilds_resp.status_code == 200
-
-    todas_historias = historia.query.all()
+    # Busca apenas as histórias daquele guild_id específico
+    historias_servidor = historia.query.filter_by(guild_id=str(guild_id)).all()
+    
     return render_template(
         'dashboard.html', 
         user=user_data, 
-        historias=todas_historias, 
+        historias=historias_servidor, 
         view='historias',
-        bot_online=bot_online
+        guild_id=guild_id
     )
+
+@app.route('/deletar_historia/<int:historia_id>', methods=['POST'])
+def deletar_historia(historia_id):
+    if 'discord_token' not in session:
+        return redirect(url_for('index'))
+
+    h = historia.query.get(historia_id)
+    if h:
+        guild_id = h.guild_id
+        db.session.delete(h)
+        db.session.commit()
+        return redirect(url_for('ver_historias_servidor', guild_id=guild_id))
+    
+    return redirect(url_for('dashboard'))
 
 @app.route('/configurar/<guild_id>', methods=['GET', 'POST'])
 def configurar(guild_id):
@@ -179,6 +189,67 @@ def configurar(guild_id):
         user=user_data, 
         channels=channels,
         bot_online=bot_online
+    )
+
+# Rota para listar os servidores em comum do usuário logado (sem precisar ser admin)
+@app.route('/publico/servidores')
+def publico_servidores():
+    if 'discord_token' not in session:
+        return redirect(url_for('login'))
+
+    headers = {'Authorization': f"Bearer {session['discord_token']}"}
+    
+    # Puxa os dados do usuário e os servidores dele no Discord
+    user_resp = requests.get('https://discord.com/api/users/@me', headers=headers)
+    user_data = user_resp.json() if user_resp.status_code == 200 else None
+
+    guilds_resp = requests.get('https://discord.com/api/users/@me/guilds', headers=headers)
+    guilds_data = guilds_resp.json() if guilds_resp.status_code == 200 else []
+
+    # Puxa a lista de servidores em que o BOT está conectado
+    bot_guilds_resp = requests.get(
+        'https://discord.com/api/v10/users/@me/guilds',
+        headers={'Authorization': f"Bot {BOT_TOKEN}"}
+    )
+    
+    bot_guild_ids = []
+    if bot_guilds_resp.status_code == 200:
+        bot_guild_ids = [str(g['id']) for g in bot_guilds_resp.json()]
+
+    # Filtra apenas os servidores onde o usuário E o bot estão juntos (em comum)
+    servidores_em_comum = []
+    for g in guilds_data:
+        guild_id_str = str(g['id'])
+        if guild_id_str in bot_guild_ids:
+            servidores_em_comum.append({
+                'id': guild_id_str,
+                'name': g.get('name')
+            })
+
+    return render_template(
+        'servidores_publicos.html', 
+        user=user_data, 
+        servidores=servidores_em_comum
+    )
+
+# Rota para ver as histórias daquele servidor em comum
+@app.route('/publico/historias/<guild_id>')
+def publico_historias_servidor(guild_id):
+    if 'discord_token' not in session:
+        return redirect(url_for('login'))
+
+    headers = {'Authorization': f"Bearer {session['discord_token']}"}
+    user_resp = requests.get('https://discord.com/api/users/@me', headers=headers)
+    user_data = user_resp.json() if user_resp.status_code == 200 else None
+
+    historias_servidor = historia.query.filter_by(guild_id=str(guild_id)).all()
+    
+    return render_template(
+        'dashboard.html', 
+        user=user_data, 
+        historias=historias_servidor, 
+        view='historias',
+        guild_id=guild_id
     )
 
 if __name__ == '__main__':

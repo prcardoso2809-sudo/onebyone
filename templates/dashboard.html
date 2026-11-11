@@ -39,7 +39,7 @@
     <div class="middle-container">
       <nav class="sidebar">
         <a href="/dashboard">servidores</a>
-        <a href="/historias">histórias</a>
+        <!-- Botão da sidebar removido como você pediu! -->
       </nav>
 
       <main class="content-box scrollable-box">
@@ -48,50 +48,64 @@
         {% if historias %}
         <div class="list-container">
           {% for h in historias %}
-          <div class="card-item">
-            <p class="card-title">
-              <strong>Vencedor ID:</strong> {{ h.vencedor_id }}
-            </p>
-            <p class="card-subtitle">"{{ h.texto_completo }}"</p>
+          <div class="card-item" style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+            <div>
+              <p class="card-title">
+                <strong>Vencedor ID:</strong> {{ h.vencedor_id }}
+              </p>
+              <p class="card-subtitle">"{{ h.texto_completo }}"</p>
+            </div>
+            <form action="/deletar_historia/{{ h.id }}" method="POST" style="margin: 0;">
+              <button type="submit" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold;">Apagar</button>
+            </form>
           </div>
           {% endfor %}
         </div>
         {% else %}
         <p class="empty-text">
-          Ainda não há histórias salvas. Vencedores de partidas aparecerão aqui!
+          Ainda não há histórias salvas neste servidor. Vencedores de partidas aparecerão aqui!
         </p>
-        {% endif %} {% else %}
-        <h2 class="section-title">🖥️ Escolha um Servidor</h2>
+        {% endif %} 
+        
+        {% else %}
+        
+        <h2 class="section-title">🖥️ Meus Servidores</h2>
         <p class="section-desc">
-          Selecione o servidor onde deseja gerenciar o bot:
+          Gerencie seu bot ou veja as histórias registradas:
         </p>
 
-        <!-- Dentro do bloco de servidores no dashboard.html -->
         {% if guilds %}
         <div class="guilds-grid">
           {% for g in guilds %}
           <div class="guild-card">
             <span class="guild-name">{{ g.name }}</span>
-            {% if g.is_admin %} {% if g.bot_presente %}
-            <a href="/configurar/{{ g.id }}" class="btn-config">Configurar</a>
-            {% else %}
-            <a
-              href="https://discord.com/oauth2/authorize?client_id={{ client_id }}&scope=bot&permissions=8&guild_id={{ g.id }}"
-              target="_blank"
-              class="btn-invite"
-              >Convidar Bot</a
-            >
-            {% endif %} {% else %}
-            <span class="guild-readonly">Apenas visualização</span>
-            {% endif %}
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 5px;">
+              {% if g.is_admin %}
+                {% if g.bot_presente %}
+                  <a href="/configurar/{{ g.id }}" class="btn-config">Configurar</a>
+                  <a href="/historias/{{ g.id }}" class="btn-config" style="background-color: #3b82f6; color: white;">Histórias</a>
+                {% else %}
+                  <a
+                    href="https://discord.com/oauth2/authorize?client_id={{ client_id }}&scope=bot&permissions=8&guild_id={{ g.id }}"
+                    target="_blank"
+                    class="btn-invite"
+                  >Convidar Bot</a>
+                {% endif %}
+              {% else %}
+                <span class="guild-readonly">Apenas visualização</span>
+                <a href="/historias/{{ g.id }}" class="btn-config" style="background-color: #3b82f6; color: white;">Histórias</a>
+              {% endif %}
+            </div>
           </div>
           {% endfor %}
         </div>
         {% else %}
         <p class="empty-text">
-          Nenhum servidor comum encontrado ou você precisa entrar novamente.
+          Nenhum servidor encontrado.
         </p>
-        {% endif %} {% endif %}
+        {% endif %} 
+        
+        {% endif %}
       </main>
     </div>
 

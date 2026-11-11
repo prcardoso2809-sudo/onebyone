@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Um por Um! - Servidores em Comum</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Martel+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='sldashboard.css') }}">
+</head>
+<body>
+    <header class="top-header">
+      <h1><a href="/dashboard">um por um!</a></h1>
+      <div class="profile-avatar">
+        {% if user and user.avatar %}
+        <img src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png" alt="Avatar" />
+        {% else %}
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+        </svg>
+        {% endif %}
+      </div>
+    </header>
+
+    <div class="middle-container" style="justify-content: center;">
+      <main class="content-box scrollable-box" style="max-width: 800px; width: 100%;">
+        <h2 class="section-title">📜 Selecione um Servidor</h2>
+        <p class="section-desc">
+          Aqui estão os servidores em que você e o bot estão juntos:
+        </p>
+
+        {% if servidores %}
+        <div class="guilds-grid">
+          {% for s in servidores %}
+          <div class="guild-card">
+            <span class="guild-name">{{ s.name }}</span>
+            <a href="/publico/historias/{{ s.id }}" class="btn-config" style="background-color: #3b82f6; color: white;">Ver Histórias</a>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-text">Você não tem nenhum servidor em comum com o bot onde possa ver histórias.</p>
+        {% endif %}
+      </main>
+    </div>
+</body>
+</html>
